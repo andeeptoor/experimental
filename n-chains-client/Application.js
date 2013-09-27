@@ -6,25 +6,44 @@ NCHAINS.Application = (function () {
 
 		var LOG = NCHAINS.Log.logger('main.Application');
 
+
 		this.getInput = function () {
 			LOG.debug('Getting input...');
 			
-			setTimeout($.proxy(function () {
-				this.train();
-			}, this), 4000);
+			$.getJSON('api/getInput', $.proxy(function (data) {
+				LOG.debug('received data.');
+				this.train(this.parseInput(data));
+			}, this));
 		};
 
-		this.train = function () {
+		this.parseInput = function (data) {
+			var result = [],
+				vals = [];
+
+			$.each(data, function (key, value) {
+				vals.push(value);
+			});
+
+
+			result.push({ input: vals, output: vals });
+			return result;
+		};
+
+		this.train = function (data) {
 			LOG.debug('Training...');
 
-			setTimeout($.proxy(function () {
-				this.sendOutput();
-			}, this), 4000);
+			// TODO: put into a webworker
+			var net = new brain.NeuralNetwork(),
+				output = net.train(data);
+
+			this.sendOutput(output);
+			LOG.debug('Training complete...');
 		};
 
-		this.sendOutput = function () {
+		this.sendOutput = function (output) {
 			LOG.debug('Sending output...');
 
+			//TODO: send output to server
 			setTimeout($.proxy(function () {
 				this._finish();
 			}, this), 4000);
