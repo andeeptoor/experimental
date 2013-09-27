@@ -12,7 +12,7 @@ TEST_FILES := $(wildcard ${SOURCE_DIR}/*Test.cpp)
 USE_FILES := $(filter-out $(TEST_FILES),$(ALL_CPP_FILES))
 OBJ_FILES = $(patsubst ${SOURCE_DIR}/%.cpp,${OBJ_DIR}/%.o,$(USE_FILES))
 
-all: init imglib NNImageTest NNTimeSeriesTest
+all: init imglib NNTimeSeriesTest
 
 imglib: init ${OBJ_FILES}
 	ar r ${EXEC_DIR}/imglib ${OBJ_FILES}
