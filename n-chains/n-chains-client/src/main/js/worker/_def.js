@@ -1,0 +1,3 @@
+var NCHAINS = {
+	namespace: function () { }
+};
