@@ -15,19 +15,25 @@ MatAdapter::MatAdapter(int _numberOfColors) {
 
 MatAdapter::~MatAdapter() {}
 
+Mat MatAdapter::readFileToMat(const string& file, int numberOfColors, int imageDimension) {
+	cout << file << endl;
+	Mat image;
+	if (numberOfColors == 1) {
+		image = imread(file, CV_LOAD_IMAGE_GRAYSCALE);
+	} else {
+		image = imread(file);
+	}
+	resize(image, image, Size(imageDimension, imageDimension));
+	return image;
+}
+
 vector<Mat> MatAdapter::readImagesToMats(int imageDimension, char* imageDirectory, char* fileExtension, int numberOfColors) {
 	vector<string> files;
 	vector<Mat> images;
 	utils::recursivelySearchDirectoryForFiles(imageDirectory, fileExtension, &files);
 	for (int f = 0; f < files.size(); f++) {
-		cout << files[f] << endl;
-		Mat image;
-		if (numberOfColors == 1) {
-			image = imread(files[f], CV_LOAD_IMAGE_GRAYSCALE);
-		} else {
-			image = imread(files[f]);
-		}
-		resize(image, image, Size(imageDimension, imageDimension));
+		string file = files[f];
+		Mat image = readFileToMat(file, numberOfColors, imageDimension);
 		images.push_back(image);
 	}
 	files.clear();

@@ -29,3 +29,25 @@ void DataFileParser::writeDataToFile(vector<double> data, string filename) {
 	outputFile.close();
 }
 
+vector<double> DataFileParser::readDataFromFile(string filename) {
+	ifstream inputFile(filename.c_str());
+	if (!inputFile) {
+		cout << "Cannot open data file" << filename << endl;
+		exit(0);
+	}
+
+	vector<double> data;
+	int rowSize;
+	while (!inputFile.eof()) {
+		double value;
+		inputFile.read(reinterpret_cast<char*>(&value), sizeof value);
+		if (inputFile.fail()) {
+			break;
+		}
+		data.push_back(value);
+	}
+
+	inputFile.close();
+	return data;
+}
+

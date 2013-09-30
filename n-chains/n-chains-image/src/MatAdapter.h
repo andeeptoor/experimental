@@ -22,8 +22,10 @@ public:
 	vector<vector<double> > readMatsToData(vector<Mat> images);
 	void writeDataToMat(const vector<double>& output, Mat& test);
 	vector<Mat> readImagesToMats(int imageDimension, char* imageDirectory, char* fileExtension, int numberOfColors);
+	Mat readFileToMat(const string& file, int numberOfColors, int imageDimension);
 private:
 	int numberOfColors;
+
 };
 
 #endif /* MATADAPTER_H_ */

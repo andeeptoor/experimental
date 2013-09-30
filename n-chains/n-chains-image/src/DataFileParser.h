@@ -17,6 +17,7 @@ public:
 	DataFileParser();
 	virtual ~DataFileParser();
 	void writeDataToFile(vector<double> data, string filename);
+	vector<double> readDataFromFile(string filename);
 };
 
 #endif /* DATAFILEPARSER_H_ */

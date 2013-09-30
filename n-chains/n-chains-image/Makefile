@@ -7,12 +7,14 @@ SOURCE_DIR=src
 OBJ_DIR=obj
 EXEC_DIR=target
 
+EXECUTABLE_EXTENSION=Test
+
 ALL_CPP_FILES := $(wildcard ${SOURCE_DIR}/*.cpp)
-TEST_FILES := $(wildcard ${SOURCE_DIR}/*Test.cpp)
-USE_FILES := $(filter-out $(TEST_FILES),$(ALL_CPP_FILES))
+EXECUTABLE_FILES := $(wildcard ${SOURCE_DIR}/*${EXECUTABLE_EXTENSION}.cpp)
+USE_FILES := $(filter-out $(EXECUTABLE_FILES),$(ALL_CPP_FILES))
 OBJ_FILES = $(patsubst ${SOURCE_DIR}/%.cpp,${OBJ_DIR}/%.o,$(USE_FILES))
 
-all: init imglib NNTimeSeriesTest
+all: init imglib SplitTest StitchTest
 
 imglib: init ${OBJ_FILES}
 	ar r ${EXEC_DIR}/imglib ${OBJ_FILES}
@@ -20,7 +22,7 @@ imglib: init ${OBJ_FILES}
 ${OBJ_DIR}/%.o: ${SOURCE_DIR}/%.cpp 
 	$(CC) $(CFLAGS) -o $@ $<
 	
-%Test: ${OBJ_DIR}/%Test.o 
+%${EXECUTABLE_EXTENSION}: ${OBJ_DIR}/%${EXECUTABLE_EXTENSION}.o 
 	$(CC) -o ${EXEC_DIR}/$@ ${OBJ_DIR}/$@.o ${EXEC_DIR}/imglib  $(LDFLAGS)
 	
 init:
