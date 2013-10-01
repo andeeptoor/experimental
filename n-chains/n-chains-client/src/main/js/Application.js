@@ -2,30 +2,44 @@ NCHAINS.namespace('NCHAINS');
 
 NCHAINS.Application = (function () {
 
-	var App = function () { 
+	var LOG = NCHAINS.Log.logger('main.Application'),
+		worker = new Worker('src/main/js/worker/Main.js'),
+		socket = io.connect('http://localhost:8888'),
 
-		var LOG = NCHAINS.Log.logger('main.Application');
+		onParcelData = function (data) {
+			var serializedData = JSON.stringify(data);
 
-		this.worker = new Worker('src/main/js/worker/Main.js');
+			LOG.debug('Data received from server, passing to worker thread.');
+			consoleWrite('Data recieved from server, passing to worker thread:');
+			consoleWrite(serializedData);
 
-		this.worker.addEventListener('message', $.proxy(function (evt) {
-			$('p').append('<span>' + evt.data + '</span><br>');
-			setTimeout($.proxy(function () {
-				this.run();
-			}, this), 3000);
-		}, this));
+			worker.postMessage(serializedData);
+		},
 
-		this.initialize = function () {
-			LOG.debug('Initializing worker.');
-			this.worker.postMessage('GO');
+		onReturnData = function (evt) {
+			LOG.debug('Worker finished processing data: ' + evt.data);
+			consoleWrite('Worker finished processing data: ');
+			consoleWrite(evt.data);
+			socket.emit('returnData', JSON.parse(evt.data));
+		},
+
+		consoleWrite = function (message) {
+			$('p').append('<span style="color: #ffffff">' + new Date().toTimeString() + ' >> ' + message + '</span><br>');
 		};
 
-		this.run = function () {
-			LOG.debug('Running annother iteration...')
-			this.worker.postMessage('run');
-		};
+
+
+	// initialize server-side listeners.
+	socket.on('parcelData', onParcelData);
+
+	// initialize worker listeners
+	worker.addEventListener('message', onReturnData);
+
+	return {
+		initialize: function () {
+			LOG.debug('Application Initialized!');
+			return this;
+		}	
 	};
-
-	return App;
 
 })();

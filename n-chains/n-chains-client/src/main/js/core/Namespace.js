@@ -1,4 +1,4 @@
-var NCHAINS = (function(nchains) {
+var NCHAINS = (function(my) {
  
     /**
      * Recursively generate a namespace.
@@ -26,7 +26,7 @@ var NCHAINS = (function(nchains) {
      * Creates the namespace specified by the namespace string.
      * @param namespace period delimited string value.
      */
-    nchains.namespace = function(namespace) {
+    my.namespace = function(namespace) {
  
         if( typeof namespace == 'string') {
             var hierarchy = namespace.split(".");
@@ -38,7 +38,7 @@ var NCHAINS = (function(nchains) {
  
     };
  
-    return nchains;
+    return my;
  
  
 })( NCHAINS || { } );

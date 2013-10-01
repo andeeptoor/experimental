@@ -14,7 +14,7 @@ NCHAINS.Log = (function () {
 				this.id = logID;
 				this.debug = function (message) {
 					if (!$.isEmptyObject(console)) {
-						console.debug(this.id + ">> " + message);
+						console.debug(this.id + "> " + new Date().toTimeString() + " >> " + message);
 					}
 				};
 			};
