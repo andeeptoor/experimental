@@ -15,7 +15,7 @@ NCHAINS.Execution = (function () {
 		var net = new brain.NeuralNetwork();
 		net.train(input);
 
-		return JSON.stringify(net.toJSON());
+		return net.toJSON();
 	}
 
 	return {

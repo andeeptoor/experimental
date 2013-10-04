@@ -1,4 +1,5 @@
-var io = require('socket.io').listen(8888);
+var io = require('socket.io').listen(8888),
+	brain = require('brain');
 
 var Application = (function () {
 
@@ -405,8 +406,11 @@ var Application = (function () {
 		"input399":0.713725
 	};
 
-
-	function formatData(data) {
+	/**
+	 * @private
+	 * Formats the data into the brain.js training format.
+	 */
+	function formatOutput(data) {
 		var obj = { input: [], output: null },
 			key,
 			result = [];
@@ -423,17 +427,57 @@ var Application = (function () {
 		return result;
 	}
 
+	/**
+	 * @private
+	 * Formats data for brain.js input format.
+	 */
+	function formatInput(data) {
+		var result = [];
+		for (key in data) {
+			if (data.hasOwnProperty(key)) {
+				result.push(data[key]);
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * @private
+	 * Returns a portion of data to the client for processing
+	 * (MOCK DATA for now).
+	 */
+	function parcelData() {
+		return formatOutput(mockData);
+	}
+
+	/**
+	 * @private
+	 * Recieves the neural network, and runs the neural network on the mock data input.
+	 */
+	function returnData(data) {
+		console.log('Processed data recieved');
+
+		var net = new brain.NeuralNetwork(),
+			input,
+			output;
+		
+		net.fromJSON(data);
+
+		input = formatInput(mockData);
+		output = net.run(input);
+
+		console.log('Neural Network output -> ');
+		console.log(JSON.stringify(output));
+	}
+
 	// set up listeners
 	io.sockets.on('connection', function (socket) {
-
 		// when connected parcel some data out
 		console.log('Connection recieved, parcelling data...');
-		socket.emit('parcelData', formatData(mockData));
+		socket.emit('parcelData', parcelData());
 
-		socket.on('returnData', function (data) {
-			console.log('Recieved processed data: ' + data);
-		});
-
+		// socket event listeners
+		socket.on('returnData', returnData);
 	});
 
 }());

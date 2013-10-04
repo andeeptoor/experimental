@@ -17,10 +17,9 @@ NCHAINS.Application = (function () {
 		},
 
 		onReturnData = function (evt) {
-			LOG.debug('Worker finished processing data: ' + evt.data);
-			consoleWrite('Worker finished processing data: ');
-			consoleWrite(evt.data);
-			socket.emit('returnData', JSON.parse(evt.data));
+			consoleWrite('Passing processed data to server: ');
+			consoleWrite(JSON.stringify(evt.data));
+			socket.emit('returnData', evt.data);
 		},
 
 		consoleWrite = function (message) {
