@@ -1,12 +1,4 @@
-module.exports = {
-	mockData: mockData(),
-	formatInput: formatInput,
-	formatOutput: formatOutput
-};
-
-function mockData() {
-
-	return {
+{
 		"input0":0.223529,
 		"input1":0.227451,
 		"input2":0.227451,
@@ -407,40 +399,4 @@ function mockData() {
 		"input397":0.862745,
 		"input398":0.717647,
 		"input399":0.713725
-	};
-}
-
-/**
- * @private
- * Formats the data into the brain.js training format.
- */
-function formatOutput(data) {
-	var obj = { input: [], output: null },
-		key,
-		result = [];
-
-	for (key in data) {
-		if (data.hasOwnProperty(key)) {
-			obj.input.push(data[key]);
-		}
 	}
-
-	obj.output = obj.input;
-	result.push(obj);
-
-	return result;
-}
-
-/**
- * @private
- * Formats data for brain.js input format.
- */
-function formatInput(data) {
-	var result = [];
-	for (key in data) {
-		if (data.hasOwnProperty(key)) {
-			result.push(data[key]);
-		}
-	}
-	return result;
-}

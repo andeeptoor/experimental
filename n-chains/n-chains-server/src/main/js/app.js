@@ -1,19 +1,24 @@
 var NCHAINS = {},
 	io,
 	brain,
-	_data;
+	fs,
+	data;
 
 io = require('socket.io').listen(8888);
 brain = require('brain');
-_data = require('./_Data');
+fs = require('fs');
 
 NCHAINS.Application = (function () {
+
+	data = require('./Data');
+
+	var dataController = new data.DataController(fs);
 
 	// set up listeners
 	io.sockets.on('connection', function (socket) {
 		// when connected parcel some data out
 		console.log('Connection recieved, parcelling data...');
-		socket.emit('parcelData', doParcelData());
+		parcelData(socket);
 
 		// socket event listeners
 		socket.on('returnData', onReturnData);
@@ -22,31 +27,31 @@ NCHAINS.Application = (function () {
 	/**
 	 * @private
 	 * Returns a portion of data to the client for processing
-	 * (MOCK DATA for now).
 	 */
-	function doParcelData() {
-		console.log('PARCELLED DATA' + JSON.stringify(_data.mockData));
-		return _data.formatOutput(_data.mockData);
+	function parcelData(socket) {
+		dataController.readData('input.dat', function (myData) {
+			socket.emit('parcelData', myData);
+		});
 	}
 
 	/**
 	 * @private
 	 * Recieves the neural network, and runs the neural network on the mock data input.
 	 */
-	function onReturnData(data) {
-		console.log('Processed data recieved');
+	function onReturnData(myData) {
+		console.log('Recieved data from client...');
 
-		var net = new brain.NeuralNetwork(),
-			input,
-			output;
+		var net = new brain.NeuralNetwork();
 		
-		net.fromJSON(data);
+		net.fromJSON(myData);
 
-		input = _data.formatInput(_data.mockData);
-		output = net.run(input);
-
-		console.log('Neural Network output -> ');
-		console.log(JSON.stringify(output));
+		dataController.readData('input.dat', function (myData) {
+			var input = dataController.formatOutput(myData),
+				output = net.run(input);
+			
+			console.log('Saving processed data...');
+			dataController.writeData('output.dat', JSON.stringify(output));
+		});
 	}
 
 	return this;
