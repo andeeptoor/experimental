@@ -22,6 +22,7 @@ function DataController(fs) {
 		
 		this.fs.readFile(filepath, 'utf8', function (err, data) {
 			if (err) {
+				console.error(err.stack);
 				console.error('Error reading file -> ' + filepath);
 			} else {
 				callback.call(scope, that.formatInput(JSON.parse(data)));

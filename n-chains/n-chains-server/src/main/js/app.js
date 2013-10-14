@@ -2,12 +2,16 @@ var NCHAINS = {},
 	io,
 	brain,
 	fs,
-	data;
+	childProcess,
+	data,
+	image;
 
 io = require('socket.io').listen(8888);
+childProcess = require('child_process');
 brain = require('brain');
 fs = require('fs');
 util = require('./Util').util;
+image = require('./Image');
 
 NCHAINS.Application = (function () {
 
@@ -51,6 +55,7 @@ NCHAINS.Application = (function () {
 			
 			console.log('Saving processed data...');
 			dataController.writeData('output.dat', JSON.stringify(output));
+			new image.Image(childProcess).process();
 		}, this));
 	}
 
